@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis</title>
+    <link rel = "icon" href="images/logo.png" type = "image/x-icon">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9d2;
+            background-image: linear-gradient(315deg, #f8f9d2 0%, #e8dbfc 74%);
+        }
+    
+        #chartContainer {
+            width: 800px;
+            height: 620px;
+            margin: -30px auto 0 auto;
+        }
+    
+        #dataDisplay {
+            font-family: 'Times New Roman', serif;
+            font-size: 30px;
+            margin-top: 10px;
+            text-align: center;
+            margin-top: -10px;
+        }
+    
+        #dropdownContainer {
+            text-align: center;
+            margin-top: -10px;
+        }
+    
+        #selectedOptionText {
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    
+        #reportTitle {
+            text-align: center;
+            font-size: 45px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    
+        /* CSS for dropdown styling */
+        #selectOption {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+        
+        .highcharts-pie-series .highcharts-data-labels text {
+    fill: black !important;
+}
+
+
+
+    
+        /* CSS for subject labels */
+        
+
+
+    </style>
+    
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+</head>
+<body>
+    <div id="reportTitle">
+        ANALYSIS
+    </div>
+    <div id="dropdownContainer">
+        <label for="selectOption">Select Option:</label>
+        <select id="selectOption">
+            <option value="failToPass">Fail to Pass</option>
+            <option value="gradeIncrement">Grade Increment</option>
+        </select>
+    </div>
+    <div id="selectedOptionText"></div>
+    <div id="chartContainer"></div>
+    <div id="dataDisplay"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample data
+            const data = {
+                series: [
+                    {
+                        name: 'Data',
+                        colorByPoint: true,
+                        data: [
+                            {
+                                name: 'DSA',
+                                y: 2
+                            },
+                            {
+                                name: 'POPL',
+                                y: 3
+                            },
+                            {
+                                name: 'OS',
+                                y: 1
+                            },
+                            {
+                                name: 'ML',
+                                y: 2
+                            },
+                            {
+                                name: 'SE',
+                                y: 2
+                            },
+                            {
+                                name: 'FODS',
+                                y: 2
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            // Chart options
+            const options = {
+                chart: {
+                    type: 'pie',
+                    renderTo: 'chartContainer',
+                    options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutBounce'
+                    },
+                    backgroundColor: 'rgba(0,0,0,0)'
+                },
+                title: {
+                    text: ''
+                },
+                plotOptions: {
+                    pie: {
+                        depth: 40,
+                        animation: true,
+                        borderWidth: 1,
+                        borderColor: '#ffffff',
+                        slicedOffset: 10,
+                        dataLabels: {
+                            connectorWidth: 1,
+                            formatter: function() {
+                                return '<span class="subject-label">' + this.point.name + '</span><br>' + this.point.y;
+                            }
+                        }
+                    }
+                },
+                series: data.series,
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.y}</b>'
+                }
+            };
+
+            // Create the chart
+            const chart = new Highcharts.Chart(options);
+
+            // Event listener for click event on label categories
+            chart.series[0].points.forEach(function(point) {
+                point.graphic.element.addEventListener('click', function() {
+                    const label = point.name;
+                    const value = point.y;
+                    const message = label + ': ' + value;
+                    document.getElementById('dataDisplay').innerHTML = message;
+                });
+            });
+
+            // Event listener for change event on dropdown
+            const selectOption = document.getElementById('selectOption');
+            selectOption.addEventListener('change', function() {
+                const selectedOption = selectOption.value;
+                if (selectedOption === 'failToPass') {
+                    document.getElementById('selectedOptionText').innerHTML = 'Fail to Pass';
+                    // Update chart data here for "Fail to Pass" option if needed
+                    chart.series[0].update(
+                        {
+                            data: [
+                                { name: 'DSA', y: 2 },
+                                { name: 'POPL', y: 3 },
+                                { name: 'OS', y: 0 },
+                                { name: 'ML', y: 2 },
+                                { name: 'SE', y: 3 },
+                                { name: 'FODS', y: 1 }
+                            ]
+                        },
+                        true,
+                        false,
+                        {
+                            duration: 1000,
+                            easing: 'easeOutBounce'
+                        }
+                    );
+                } else if (selectedOption === 'gradeIncrement') {
+                    document.getElementById('selectedOptionText').innerHTML = 'Grade Increment';
+                    // Update chart data here for "Grade Increment" option if needed
+                    chart.series[0].update(
+                        {
+                            data: [
+                                { name: 'DSA', y: 2 },
+                                { name: 'POPL', y: 4 },
+                                { name: 'OS', y: 2 },
+                                { name: 'ML', y: 1 },
+                                { name: 'SE', y: 2 },
+                                { name: 'FODS', y: 2 }
+                            ]
+                        },
+                        true,
+                        false,
+                        {
+                            duration: 1000,
+                            easing: 'easeOutBounce'
+                        }
+                    );
+                }
+            });
+        });
+    </script>
+</body>
+</html>
